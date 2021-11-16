@@ -56,7 +56,7 @@ public class EchoServerMultiThreaded  {
                 System.out.println("Connexion from:" + clientSocket.getInetAddress());
                 ClientThread ct = new ClientThread(clientSocket);
                 ct.start();
-                clientThreadMap.put(ct.getUserID(), ct);
+                clientThreadList.add(ct);
                 i++;
             }
             int index = 0;
@@ -64,7 +64,7 @@ public class EchoServerMultiThreaded  {
 
                 for (int j = 0; j < clientThreadList.size(); j++) {
                     Message message = clientThreadList.get(j).getMessage();
-                    if(clientThreadList.get(j).hasNewMessage()){
+                    if(message != null){
                         System.out.println(message);
                         // Send message to all client
                         for (int k = 0; k < clientThreadList.size(); k++) {

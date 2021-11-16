@@ -9,6 +9,7 @@ package stream;
 
 import java.io.*;
 import java.net.*;
+import java.util.List;
 
 public class ClientThread
         extends Thread {
@@ -34,12 +35,14 @@ public class ClientThread
     public void run() {
         try {
             ObjectInputStream socIn = null;
-            socIn = new ObjectInputStream(clientSocket.getInputStream());
             socOut = new ObjectOutputStream(clientSocket.getOutputStream());
+            socIn =  new ObjectInputStream(clientSocket.getInputStream());
+            System.out.println("Successfully started Client Socket Listener");
             while (true) {
-                Message messageRead = (Message) socIn.readObject();
+                Message receivedMessage = (Message) socIn.readObject();
                 // hasNewMessage = !messageRead.isEmpty();
-                message = messageRead;
+                System.out.println(receivedMessage);
+                this.message = receivedMessage;
                 if(hasNewMessage) socOut.writeObject(message);
             }
         } catch (Exception e) {
