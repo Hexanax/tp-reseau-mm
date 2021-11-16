@@ -39,8 +39,9 @@ public class EchoServerMultiThreaded  {
      **/
     public static void main(String args[]){
         ServerSocket listenSocket;
-        List<ClientThread> clientThreadList = new ArrayList<>();
+        List<Socket> socketList = new ArrayList<>();
         Map<String, ClientThread> clientThreadMap = new HashMap<>();
+        List<ClientThread> clientThreadList = new ArrayList<>();
 
         if (args.length != 1) {
             System.out.println("Usage: java EchoServer <EchoServer port>");
@@ -56,18 +57,26 @@ public class EchoServerMultiThreaded  {
                 ClientThread ct = new ClientThread(clientSocket);
                 ct.start();
                 clientThreadMap.put(ct.getUserID(), ct);
-
                 i++;
             }
             int index = 0;
             while(true){
-                for (ClientThread ct:
-                        clientThreadMap.values()) {
-                    Message message = ct.getMessage();
-                    if(ct.hasNewMessage()){
+
+                for (int j = 0; j < clientThreadList.size(); j++) {
+                    Message message = clientThreadList.get(j).getMessage();
+                    if(clientThreadList.get(j).hasNewMessage()){
                         System.out.println(message);
+                        // Send message to all client
+                        for (int k = 0; k < clientThreadList.size(); k++) {
+                            if(k == j) {
+                                continue;
+                            }
+                            clientThreadList.get(k).sendMessage(message);
+                        }
                     }
+
                 }
+
             }
         } catch (Exception e) {
             System.err.println("Error in EchoServer:" + e);

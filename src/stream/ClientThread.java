@@ -19,12 +19,13 @@ public class ClientThread
     private Socket clientSocket;
     private Message message;
     private boolean hasNewMessage;
-    private PrintStream socOut;
+    private ObjectOutputStream socOut;
 
     ClientThread(Socket s) {
         this.clientSocket = s;
         hasNewMessage = false;
     }
+
 
     /**
      * receives a request from client then sends an echo to the client
@@ -32,15 +33,14 @@ public class ClientThread
      **/
     public void run() {
         try {
-            BufferedReader socIn = null;
-            socIn = new BufferedReader(
-                    new InputStreamReader(clientSocket.getInputStream()));
-            socOut = new PrintStream(clientSocket.getOutputStream());
+            ObjectInputStream socIn = null;
+            socIn = new ObjectInputStream(clientSocket.getInputStream());
+            socOut = new ObjectOutputStream(clientSocket.getOutputStream());
             while (true) {
-                String line = socIn.readLine();
-                hasNewMessage = line.isEmpty() ?false  : true;
-                socOut.println(line);
-
+                Message messageRead = (Message) socIn.readObject();
+                // hasNewMessage = !messageRead.isEmpty();
+                message = messageRead;
+                if(hasNewMessage) socOut.writeObject(message);
             }
         } catch (Exception e) {
             System.err.println("Error in EchoServer:" + e);
@@ -48,14 +48,18 @@ public class ClientThread
     }
 
     public Message getMessage() {
-        //String temp = message;
-        //message = "";
+        Message actMessage = message;
+        message = null;
         //System.out.println(temp);
-        return null;
+        return actMessage;
     }
 
-    public void sendMessage(String message){
-        socOut.println(message);
+    public void sendMessage(Message messageSend) {
+        try{
+            socOut.writeObject(messageSend);
+        }catch(Exception e ){
+            System.err.println("Error sendMessage ClientThread");
+        }
     }
 
     public String getUserID() {

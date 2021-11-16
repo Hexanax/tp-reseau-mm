@@ -1,6 +1,9 @@
 package stream;
 
-public class Message {
+
+import java.io.Serializable;
+
+public class Message implements Serializable {
     private long senderID;
     private String usernameSender;
 
@@ -14,6 +17,10 @@ public class Message {
         this.message = message;
     }
 
+    public Message(String message) {
+        this.message = message;
+    }
+
     public long getSenderID() {
         return senderID;
     }
@@ -22,6 +29,10 @@ public class Message {
         return usernameSender;
     }
 
-
-
+    @Override
+    public String toString() {
+        return "Message{" +
+                "message='" + message + '\'' +
+                '}';
+    }
 }
