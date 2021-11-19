@@ -2,19 +2,30 @@ package domain;
 
 
 import java.io.Serializable;
+import java.time.LocalDate;
+import java.util.Date;
 
 public class Message implements Serializable {
     private long senderID;
     private String usernameSender;
 
-    private long receiverID;
+    private String receiverID;
     private String message;
+    private LocalDate date;
 
-    public Message(long senderID, String usernameSender, long receiverID, String message) {
+
+    public Message(long senderID, String usernameSender, String receiverID, String message) {
         this.senderID = senderID;
         this.usernameSender = usernameSender;
         this.receiverID = receiverID;
         this.message = message;
+    }
+
+    public Message(String usernameSender, String receiverID, String message) {
+        this.usernameSender = usernameSender;
+        this.receiverID = receiverID;
+        this.message = message;
+        this.date = LocalDate.now();
     }
 
     public Message(String message) {
@@ -29,11 +40,17 @@ public class Message implements Serializable {
         return usernameSender;
     }
 
+    public LocalDate getDate() {
+        return date;
+    }
+
+    public void setDate(LocalDate date) {
+        this.date = date;
+    }
+
     @Override
     public String toString() {
-        return "Message{" +
-                "message='" + message + '\'' +
-                '}';
+        return senderID + " : " + message;
     }
 
     public String getMessage() {

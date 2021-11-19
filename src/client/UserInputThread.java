@@ -4,6 +4,7 @@ import domain.Message;
 
 import java.io.*;
 import java.net.Socket;
+import java.util.List;
 
 public class UserInputThread extends Thread{
     private Socket clientSocket;
@@ -11,8 +12,13 @@ public class UserInputThread extends Thread{
     BufferedReader stdIn = null;
     private boolean run = true;
 
-    UserInputThread(Socket s) {
+    private String senderUserName;
+    private String receiverUsername;
+
+    UserInputThread(Socket s, List<String> userInfo) {
         this.clientSocket = s;
+        this.senderUserName = userInfo.get(0);
+        this.receiverUsername = userInfo.get(1);
     }
 
     public void run(){
@@ -25,7 +31,7 @@ public class UserInputThread extends Thread{
                 if (line.equals(".")){
                     this.run = false;
                 }
-                socOut.writeObject(new Message(line));
+                socOut.writeObject(new Message(senderUserName, receiverUsername, line));
             }
             stdIn.close();
             socOut.close();

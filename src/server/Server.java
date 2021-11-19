@@ -34,16 +34,10 @@ public class Server {
             System.err.println("Error in EchoServer:" + e);
         }
     }
-    /**
-     * main method
-     * @param EchoServer port
-     *
-     **/
+    
     public static void main(String args[]){
         ServerSocket listenSocket;
         Service service = new Service();
-        List<Socket> socketList = new ArrayList<>();
-        Map<String, ClientSocketThread> clientThreadMap = new HashMap<>();
         List<ClientSocketThread> clientSocketThreadList = new ArrayList<>();
 
         if (args.length != 1) {
@@ -53,23 +47,12 @@ public class Server {
         try {
             listenSocket = new ServerSocket(Integer.parseInt(args[0])); //port
             System.out.println("Server ready...");
-            int i =0;
-            while (i<2) {
+            while (true) {
                 Socket clientSocket = listenSocket.accept();
                 System.out.println("Connexion from:" + clientSocket.getInetAddress());
                 ClientSocketThread ct = new ClientSocketThread(clientSocket, service);
                 ct.start();
                 clientSocketThreadList.add(ct);
-                i++;
-            }
-            int index = 0;
-            while(true){
-
-                for (int j = 0; j < clientSocketThreadList.size(); j++) {
-                    Message message = clientSocketThreadList.get(j).getMessage();
-
-                }
-
             }
         } catch (Exception e) {
             System.err.println("Error in EchoServer:" + e);

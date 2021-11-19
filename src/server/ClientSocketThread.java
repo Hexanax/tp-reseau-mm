@@ -8,24 +8,24 @@
 package server;
 
 import domain.Message;
+import domain.SystemMessage;
 
 import java.io.*;
 import java.net.*;
 
+import static domain.SystemMessageType.LOGIN_REQUEST;
+
 public class ClientSocketThread
         extends Thread {
 
-    private String userID; // classe user
+    private String username;
 
-    private Service service;
+    private final Service service;
     private Socket clientSocket;
-    private Message message;
-    private boolean hasNewMessage;
     private ObjectOutputStream socOut;
 
     ClientSocketThread(Socket socket, Service service) {
         this.clientSocket = socket;
-        hasNewMessage = false;
         this.service = service;
     }
 
@@ -41,22 +41,28 @@ public class ClientSocketThread
             socIn =  new ObjectInputStream(clientSocket.getInputStream());
             System.out.println("Successfully started Client Socket Listener");
             while (true) {
-                Message receivedMessage = (Message) socIn.readObject();
+
+                Object receivedMessage = socIn.readObject();
+                if (receivedMessage == null){
+                    continue;
+                } else if (receivedMessage instanceof Message){
+                    if (username == null) {
+                        service.sendMessageToClient((Message) receivedMessage);
+                    }
+                } else if (receivedMessage instanceof SystemMessage){
+                    if (LOGIN_REQUEST.equals(((SystemMessage) receivedMessage).type)) {
+                        username = ((SystemMessage)receivedMessage).requestedUsername;
+                    }
+                    service.handleSystemMessage((SystemMessage) receivedMessage);
+                } else {
+                    continue;
+                }
                 // hasNewMessage = !messageRead.isEmpty();
                 System.out.println(receivedMessage);
-                this.message = receivedMessage;
-                if(hasNewMessage) socOut.writeObject(message);
             }
         } catch (Exception e) {
             System.err.println("Error in EchoServer:" + e);
         }
-    }
-
-    public Message getMessage() {
-        Message actMessage = message;
-        message = null;
-        //System.out.println(temp);
-        return actMessage;
     }
 
     public void sendMessage(Message messageSend) {
@@ -67,12 +73,8 @@ public class ClientSocketThread
         }
     }
 
-    public String getUserID() {
-        return userID;
-    }
-
-    public boolean hasNewMessage() {
-        return hasNewMessage;
+    public String getUsername() {
+        return username;
     }
 }
 
