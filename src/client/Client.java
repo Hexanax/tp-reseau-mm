@@ -7,6 +7,7 @@
 package client;
 
 import domain.Message;
+import domain.SystemMessage;
 import server.ClientSocketThread;
 
 import java.io.*;
@@ -43,7 +44,7 @@ public class Client {
             socIn = new ObjectInputStream(clientSocket.getInputStream());
 
             // Start the thread that will be handling user input
-            userInputThread = new UserInputThread(clientSocket, userInfo);
+            userInputThread = new UserInputThread(socOut, userInfo);
             userInputThread.start();
         } catch (UnknownHostException e) {
             System.err.println("Don't know about host:" + args[0]);
@@ -61,7 +62,7 @@ public class Client {
             try {
                 incomingMessage = (Message) socIn.readObject();
                 if (incomingMessage != null) {
-                    System.out.println("Your Dear Friend: " + incomingMessage.getMessage());
+                    System.out.println(incomingMessage);
                 }
             if(!userInputThread.running()){
                 run = false;
@@ -81,13 +82,13 @@ public class Client {
         try{
             System.out.print("username: ");
             senderUserName = stdIn.readLine();
+            socOut.writeObject(SystemMessage.newLoginRequest(senderUserName));
+
             System.out.print("talk to: ");
             receiverUsername = stdIn.readLine();
-            stdIn.close();
         } catch (IOException e){
             e.printStackTrace();
         }
-
         return Arrays.asList(senderUserName, receiverUsername);
     }
 }

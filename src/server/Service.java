@@ -30,7 +30,7 @@ public class Service {
         if (message != null) {
             System.out.println(message);
             // Send message to all client
-            ClientSocketThread cst = onlineClientThreadMap.get(message.getUsernameSender());
+            ClientSocketThread cst = onlineClientThreadMap.get(message.getUsernameReceiver());
             cst.sendMessage(message);
         }
     }
@@ -38,8 +38,9 @@ public class Service {
     public void handleSystemMessage(SystemMessage systemMessage) {
         if (LOGIN_REQUEST.equals(systemMessage.type)) {
             String username = systemMessage.requestedUsername;
+            System.out.println("Received login request from: " + username);
             for (ClientSocketThread cst : clientSocketThreadList) {
-                if (cst.getUsername().equals(username)){
+                if (cst.getUsername() != null && cst.getUsername().equals(username)){
                     onlineClientThreadMap.put(username, cst);
                     return;
                 }

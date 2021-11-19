@@ -34,14 +34,14 @@ public class Server {
             System.err.println("Error in EchoServer:" + e);
         }
     }
-    
+
     public static void main(String args[]){
         ServerSocket listenSocket;
         Service service = new Service();
         List<ClientSocketThread> clientSocketThreadList = new ArrayList<>();
 
         if (args.length != 1) {
-            System.out.println("Usage: java EchoServer <EchoServer port>");
+            System.out.println("Usage: java Server <Server port>");
             System.exit(1);
         }
         try {
@@ -52,10 +52,10 @@ public class Server {
                 System.out.println("Connexion from:" + clientSocket.getInetAddress());
                 ClientSocketThread ct = new ClientSocketThread(clientSocket, service);
                 ct.start();
-                clientSocketThreadList.add(ct);
+                service.addClientSocketThread(ct);
             }
         } catch (Exception e) {
-            System.err.println("Error in EchoServer:" + e);
+            System.err.println("Error in Server:" + e);
         }
     }
 }

@@ -46,7 +46,7 @@ public class ClientSocketThread
                 if (receivedMessage == null){
                     continue;
                 } else if (receivedMessage instanceof Message){
-                    if (username == null) {
+                    if (username != null) {
                         service.sendMessageToClient((Message) receivedMessage);
                     }
                 } else if (receivedMessage instanceof SystemMessage){
