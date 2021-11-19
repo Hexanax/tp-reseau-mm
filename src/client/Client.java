@@ -4,14 +4,17 @@
  * Date: 10/01/04
  * Authors:
  */
-package stream;
+package client;
+
+import domain.Message;
+import server.ClientSocketThread;
 
 import java.io.*;
 import java.net.*;
 
 
 
-public class EchoClient {
+public class Client {
 
  
   /**
@@ -20,8 +23,7 @@ public class EchoClient {
   **/
     public static void main(String[] args) throws IOException {
 
-        Socket echoSocket = null;
-        ObjectOutputStream socOut = null;
+        Socket clientSocket = null;
         BufferedReader stdIn = null;
         ObjectInputStream socIn = null;
 
@@ -29,13 +31,15 @@ public class EchoClient {
           System.out.println("Usage: java EchoClient <EchoServer host> <EchoServer port>");
           System.exit(1);
         }
-
+        UserInputThread userInputThread = null;
         try {
       	    // creation socket ==> connexion
-      	    echoSocket = new Socket(args[0],new Integer(args[1]).intValue());
-	        socOut= new ObjectOutputStream(echoSocket.getOutputStream());
-            socIn = new ObjectInputStream(echoSocket.getInputStream());
-            stdIn = new BufferedReader(new InputStreamReader(System.in));
+      	    clientSocket = new Socket(args[0],new Integer(args[1]).intValue());
+            socIn = new ObjectInputStream(clientSocket.getInputStream());
+
+            // Start the thread that will be handling user input
+            userInputThread = new UserInputThread(clientSocket);
+            userInputThread.start();
         } catch (UnknownHostException e) {
             System.err.println("Don't know about host:" + args[0]);
             System.exit(1);
@@ -46,20 +50,23 @@ public class EchoClient {
         }
                              
         String line;
-        while (true) {
-        	line=stdIn.readLine();
-        	if (line.equals(".")) break;
-        	socOut.writeObject(new Message(line));
+        boolean run = true;
+        Message incomingMessage = null;
+        while (run) {
             try {
-                System.out.println("echo: " + socIn.readObject().toString());
+                incomingMessage = (Message) socIn.readObject();
+                if (incomingMessage != null) {
+                    System.out.println("Your Dear Friend: " + incomingMessage.getMessage());
+                }
+            if(!userInputThread.running()){
+                run = false;
+            }
             } catch (Exception e){
                 System.err.println("Error in EchoClient: "+ e);
             }
         }
-      socOut.close();
-      socIn.close();
       stdIn.close();
-      echoSocket.close();
+      clientSocket.close();
     }
 }
 

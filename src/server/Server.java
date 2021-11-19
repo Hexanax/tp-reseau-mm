@@ -5,7 +5,9 @@
  * Authors:
  */
 
-package stream;
+package server;
+
+import domain.Message;
 
 import java.io.*;
 import java.net.*;
@@ -14,7 +16,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class EchoServerMultiThreaded  {
+public class Server {
 
 
     static void doService(Socket clientSocket) {
@@ -39,9 +41,10 @@ public class EchoServerMultiThreaded  {
      **/
     public static void main(String args[]){
         ServerSocket listenSocket;
+        Service service = new Service();
         List<Socket> socketList = new ArrayList<>();
-        Map<String, ClientThread> clientThreadMap = new HashMap<>();
-        List<ClientThread> clientThreadList = new ArrayList<>();
+        Map<String, ClientSocketThread> clientThreadMap = new HashMap<>();
+        List<ClientSocketThread> clientSocketThreadList = new ArrayList<>();
 
         if (args.length != 1) {
             System.out.println("Usage: java EchoServer <EchoServer port>");
@@ -54,26 +57,16 @@ public class EchoServerMultiThreaded  {
             while (i<2) {
                 Socket clientSocket = listenSocket.accept();
                 System.out.println("Connexion from:" + clientSocket.getInetAddress());
-                ClientThread ct = new ClientThread(clientSocket);
+                ClientSocketThread ct = new ClientSocketThread(clientSocket, service);
                 ct.start();
-                clientThreadList.add(ct);
+                clientSocketThreadList.add(ct);
                 i++;
             }
             int index = 0;
             while(true){
 
-                for (int j = 0; j < clientThreadList.size(); j++) {
-                    Message message = clientThreadList.get(j).getMessage();
-                    if(message != null){
-                        System.out.println(message);
-                        // Send message to all client
-                        for (int k = 0; k < clientThreadList.size(); k++) {
-                            if(k == j) {
-                                continue;
-                            }
-                            clientThreadList.get(k).sendMessage(message);
-                        }
-                    }
+                for (int j = 0; j < clientSocketThreadList.size(); j++) {
+                    Message message = clientSocketThreadList.get(j).getMessage();
 
                 }
 

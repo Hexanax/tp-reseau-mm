@@ -1,4 +1,4 @@
-package stream;
+package domain;
 
 
 import java.io.Serializable;
@@ -34,5 +34,9 @@ public class Message implements Serializable {
         return "Message{" +
                 "message='" + message + '\'' +
                 '}';
+    }
+
+    public String getMessage() {
+        return message;
     }
 }

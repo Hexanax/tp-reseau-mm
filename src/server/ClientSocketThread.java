@@ -5,26 +5,28 @@
  * Authors:
  */
 
-package stream;
+package server;
+
+import domain.Message;
 
 import java.io.*;
 import java.net.*;
-import java.util.List;
 
-public class ClientThread
+public class ClientSocketThread
         extends Thread {
 
     private String userID; // classe user
 
-
+    private Service service;
     private Socket clientSocket;
     private Message message;
     private boolean hasNewMessage;
     private ObjectOutputStream socOut;
 
-    ClientThread(Socket s) {
-        this.clientSocket = s;
+    ClientSocketThread(Socket socket, Service service) {
+        this.clientSocket = socket;
         hasNewMessage = false;
+        this.service = service;
     }
 
 

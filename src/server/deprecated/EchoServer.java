@@ -5,7 +5,7 @@
  * Authors:
  */
 
-package stream;
+package server.deprecated;
 
 import java.io.*;
 import java.net.*;
