@@ -21,7 +21,7 @@ public class Server {
 
     static void doService(Socket clientSocket) {
         try {
-            BufferedReader socIn = null;
+            BufferedReader socIn;
             socIn = new BufferedReader(
                     new InputStreamReader(clientSocket.getInputStream()));
             PrintStream socOut = new PrintStream(clientSocket.getOutputStream());
@@ -40,6 +40,8 @@ public class Server {
         Service service = new Service();
         List<ClientSocketThread> clientSocketThreadList = new ArrayList<>();
 
+        // TODO : Get all the conversations
+        // TODO : Instantiate the conversations set of the service
         if (args.length != 1) {
             System.out.println("Usage: java Server <Server port>");
             System.exit(1);

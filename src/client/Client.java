@@ -1,5 +1,5 @@
 /***
- * EchoClient
+ * Client
  * Example of a TCP client 
  * Date: 10/01/04
  * Authors:
@@ -26,20 +26,19 @@ public class Client {
 
         BufferedReader stdIn = null;
         Socket clientSocket = null;
-
         ObjectInputStream socIn = null;
 
         if (args.length != 2) {
-          System.out.println("Usage: java EchoClient <EchoServer host> <EchoServer port>");
+          System.out.println("Usage: java Client <Server host> <Server port>");
           System.exit(1);
         }
         UserInputThread userInputThread = null;
-        ObjectOutputStream socOut = null;
+        ObjectOutputStream socOut;
 
         try {
 
             // creation socket ==> connexion
-            clientSocket = new Socket(args[0],new Integer(args[1]).intValue());
+            clientSocket = new Socket(args[0], Integer.parseInt(args[1]));
             socOut= new ObjectOutputStream(clientSocket.getOutputStream());
             List<String> userInfo = login(stdIn, socOut);
             socIn = new ObjectInputStream(clientSocket.getInputStream());
@@ -58,7 +57,7 @@ public class Client {
 
         String line;
         boolean run = true;
-        Message incomingMessage = null;
+        Message incomingMessage;
         while (run) {
             try {
                 incomingMessage = (Message) socIn.readObject();
@@ -85,7 +84,7 @@ public class Client {
             senderUserName = stdIn.readLine();
             socOut.writeObject(SystemMessage.newLoginRequest(senderUserName));
 
-            System.out.print("talk to: ");
+            System.out.print("conversation ID: ");
             receiverUsername = stdIn.readLine();
         } catch (IOException e){
             e.printStackTrace();

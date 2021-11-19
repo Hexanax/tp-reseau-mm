@@ -7,11 +7,13 @@
 
 package server;
 
+import domain.Conversation;
 import domain.Message;
 import domain.SystemMessage;
 
 import java.io.*;
 import java.net.*;
+import java.util.Set;
 
 import static domain.SystemMessageType.LOGIN_REQUEST;
 
@@ -19,6 +21,7 @@ public class ClientSocketThread
         extends Thread {
 
     private String username;
+    private Set<Conversation> conversationSet;
 
     private final Service service;
     private Socket clientSocket;
@@ -32,11 +35,11 @@ public class ClientSocketThread
 
     /**
      * receives a request from client then sends an echo to the client
-     * @param clientSocket the client socket
+     * @class ClientSocketThread the client socket
      **/
     public void run() {
         try {
-            ObjectInputStream socIn = null;
+            ObjectInputStream socIn;
             socOut = new ObjectOutputStream(clientSocket.getOutputStream());
             socIn =  new ObjectInputStream(clientSocket.getInputStream());
             System.out.println("Successfully started Client Socket Listener");
@@ -47,11 +50,11 @@ public class ClientSocketThread
                     continue;
                 } else if (receivedMessage instanceof Message){
                     if (username != null) {
-                        service.sendMessageToClient((Message) receivedMessage);
+                        service.sendMessageToOnlineClients((Message) receivedMessage);
                     }
                 } else if (receivedMessage instanceof SystemMessage){
                     if (LOGIN_REQUEST.equals(((SystemMessage) receivedMessage).type)) {
-                        username = ((SystemMessage)receivedMessage).requestedUsername;
+                        username = ((SystemMessage)receivedMessage).senderUsername;
                     }
                     service.handleSystemMessage((SystemMessage) receivedMessage);
                 } else {

@@ -4,15 +4,15 @@ import java.io.Serializable;
 
 public class SystemMessage implements Serializable {
     public SystemMessageType type;
-    public String requestedUsername;
+    public String senderUsername;
 
-    private SystemMessage(SystemMessageType type, String requestedUsername) {
+    private SystemMessage(SystemMessageType type, String senderUsername) {
         this.type = type;
-        this.requestedUsername = requestedUsername;
+        this.senderUsername = senderUsername;
     }
 
-    public static SystemMessage newLoginRequest(String requestedUsername){
-        return new SystemMessage(SystemMessageType.LOGIN_REQUEST, requestedUsername);
+    public static SystemMessage newLoginRequest(String senderUsername){
+        return new SystemMessage(SystemMessageType.LOGIN_REQUEST, senderUsername);
     }
 }
 

@@ -12,11 +12,11 @@ public class UserInputThread extends Thread{
     private boolean run = true;
 
     private String senderUserName;
-    private String receiverUsername;
+    private String conversationID;
 
     UserInputThread(ObjectOutputStream socOut, List<String> userInfo) {
         this.senderUserName = userInfo.get(0);
-        this.receiverUsername = userInfo.get(1);
+        this.conversationID = userInfo.get(1);
         this.socOut = socOut;
     }
 
@@ -29,7 +29,7 @@ public class UserInputThread extends Thread{
                 if (line.equals(".")){
                     this.run = false;
                 }
-                socOut.writeObject(new Message(senderUserName, receiverUsername, line));
+                socOut.writeObject(new Message(senderUserName, conversationID, line));
             }
             stdIn.close();
             socOut.close();
