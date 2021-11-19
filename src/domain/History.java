@@ -3,8 +3,9 @@ package domain;
 import java.util.List;
 
 public class History {
+    private static Integer index;
 
-    private List<String> usernamesUsers;
+    private List<Pair<String,Integer>> usernamesUsers;
     private List<Message> messages;
 
     public History(List<String> usernamesUsers){

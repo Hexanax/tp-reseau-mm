@@ -7,24 +7,22 @@ import java.net.Socket;
 import java.util.List;
 
 public class UserInputThread extends Thread{
-    private Socket clientSocket;
-    ObjectOutputStream socOut = null;
+    ObjectOutputStream socOut;
     BufferedReader stdIn = null;
     private boolean run = true;
 
     private String senderUserName;
     private String receiverUsername;
 
-    UserInputThread(Socket s, List<String> userInfo) {
-        this.clientSocket = s;
+    UserInputThread(ObjectOutputStream socOut, List<String> userInfo) {
         this.senderUserName = userInfo.get(0);
         this.receiverUsername = userInfo.get(1);
+        this.socOut = socOut;
     }
 
     public void run(){
         String line;
         try {
-            socOut= new ObjectOutputStream(this.clientSocket.getOutputStream());
             stdIn = new BufferedReader(new InputStreamReader(System.in));
             while(running()){
                 line=stdIn.readLine();
