@@ -1,37 +1,49 @@
 package server;
 
 import domain.Message;
+import domain.SystemMessage;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import static domain.SystemMessageType.LOGIN_REQUEST;
 
 public class Service {
 
-    List<ClientSocketThread> clientSocketThreadList = new ArrayList<>();
+    private List<ClientSocketThread> clientSocketThreadList;
+    private Map<String, ClientSocketThread> onlineClientThreadMap;
 
-    public Service(){
-
+    public Service() {
+        clientSocketThreadList = new ArrayList<>();
+        onlineClientThreadMap = new HashMap<>();
     }
 
-    public void setClientSocketThreadList(List<ClientSocketThread> clientSocketThreadList) {
-        this.clientSocketThreadList = clientSocketThreadList;
-    }
 
-    public void addClientSocketThreadList(ClientSocketThread clientSocketThread){
+    public void addClientSocketThread(ClientSocketThread clientSocketThread) {
         this.clientSocketThreadList.add(clientSocketThread);
     }
 
-    public void sendMessageToClient(String  nameClientDest, Message message){
-        int j=0;
-        if(message != null){
+    public void sendMessageToClient(Message message) {
+        int j = 0;
+        if (message != null) {
             System.out.println(message);
             // Send message to all client
-            for (int k = 0; k < clientSocketThreadList.size(); k++) {
-                if(k == j) {
-                    continue;
+            ClientSocketThread cst = onlineClientThreadMap.get(message.getUsernameReceiver());
+            cst.sendMessage(message);
+        }
+    }
+
+    public void handleSystemMessage(SystemMessage systemMessage) {
+        if (LOGIN_REQUEST.equals(systemMessage.type)) {
+            String username = systemMessage.requestedUsername;
+            System.out.println("Received login request from: " + username);
+            for (ClientSocketThread cst : clientSocketThreadList) {
+                if (cst.getUsername() != null && cst.getUsername().equals(username)){
+                    onlineClientThreadMap.put(username, cst);
+                    return;
                 }
-                ClientSocketThread temp = clientSocketThreadList.get(k);
-                if(nameClientDest.equals( temp.getUserID())) temp.sendMessage(message);
             }
         }
     }
