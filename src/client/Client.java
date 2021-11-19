@@ -25,6 +25,7 @@ public class Client {
 
         BufferedReader stdIn = null;
         Socket clientSocket = null;
+
         ObjectInputStream socIn = null;
 
         if (args.length != 2) {
@@ -70,7 +71,7 @@ public class Client {
                 System.err.println("Error in EchoClient: "+ e);
             }
         }
-      stdIn.close();
+
       clientSocket.close();
     }
 

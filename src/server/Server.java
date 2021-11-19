@@ -18,22 +18,6 @@ import java.util.Map;
 
 public class Server {
 
-
-    static void doService(Socket clientSocket) {
-        try {
-            BufferedReader socIn = null;
-            socIn = new BufferedReader(
-                    new InputStreamReader(clientSocket.getInputStream()));
-            PrintStream socOut = new PrintStream(clientSocket.getOutputStream());
-            if (true) {
-                String line = socIn.readLine();
-                socOut.println(line);
-
-            }
-        } catch (Exception e) {
-            System.err.println("Error in EchoServer:" + e);
-        }
-    }
     
     public static void main(String args[]){
         ServerSocket listenSocket;
