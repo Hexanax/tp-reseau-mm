@@ -7,8 +7,8 @@ import java.time.LocalDate;
 public class Message implements Serializable {
     private long senderID;
     private String usernameSender;
+    private String destConversation;
 
-    private String usernameReceiver;
 
     private String message;
     private LocalDate date;
@@ -16,19 +16,26 @@ public class Message implements Serializable {
     public Message(long senderID, String usernameSender, String usernameReceiver, String message) {
         this.senderID = senderID;
         this.usernameSender = usernameSender;
-        this.usernameReceiver = usernameReceiver;
-        this.message = message;
-    }
 
-    public Message(String usernameSender, String usernameReceiver, String message) {
-        this.usernameSender = usernameSender;
-        this.usernameReceiver = usernameReceiver;
+        this.destConversation = usernameReceiver;
+
         this.message = message;
         this.date = LocalDate.now();
     }
 
     public String getUsernameReceiver() {
         return usernameReceiver;
+    }
+
+    public Message(String usernameSender, String destConversation, String message) {
+        this.usernameSender = usernameSender;
+        this.destConversation = destConversation;
+        this.message = message;
+        this.date = LocalDate.now();
+    }
+
+    public String getDestConversation() {
+        return destConversation;
     }
 
     public Message(String message) {
@@ -53,7 +60,9 @@ public class Message implements Serializable {
 
     @Override
     public String toString() {
-        return usernameSender + ": " + message;
+
+        return usernameSender+ ": " + message;
+
     }
 
     public String getMessage() {

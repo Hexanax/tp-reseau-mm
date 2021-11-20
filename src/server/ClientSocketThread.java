@@ -7,11 +7,15 @@
 
 package server;
 
+import domain.Conversation;
 import domain.Message;
 import domain.SystemMessage;
 
 import java.io.*;
 import java.net.*;
+import java.util.Set;
+
+import static domain.SystemMessageType.LOGIN_REQUEST;
 
 import static domain.SystemMessageType.LOGIN_REQUEST;
 
@@ -19,6 +23,9 @@ public class ClientSocketThread
         extends Thread {
 
     private String username;
+
+    private Set<Conversation> conversationSet;
+
 
     private final Service service;
     private Socket clientSocket;
@@ -32,11 +39,11 @@ public class ClientSocketThread
 
     /**
      * receives a request from client then sends an echo to the client
-     * @param clientSocket the client socket
+     * @class ClientSocketThread the client socket
      **/
     public void run() {
         try {
-            ObjectInputStream socIn = null;
+            ObjectInputStream socIn;
             socOut = new ObjectOutputStream(clientSocket.getOutputStream());
             socIn =  new ObjectInputStream(clientSocket.getInputStream());
             System.out.println("Successfully started Client Socket Listener");
@@ -47,17 +54,19 @@ public class ClientSocketThread
                     continue;
                 } else if (receivedMessage instanceof Message){
                     if (username != null) {
-                        service.sendMessageToClient((Message) receivedMessage);
+
+                        System.out.println("Message to be sent : " + receivedMessage );
+                        service.sendMessageToOnlineClients((Message) receivedMessage);
                     }
                 } else if (receivedMessage instanceof SystemMessage){
                     if (LOGIN_REQUEST.equals(((SystemMessage) receivedMessage).type)) {
-                        username = ((SystemMessage)receivedMessage).requestedUsername;
+                        username = ((SystemMessage)receivedMessage).content;
                     }
-                    service.handleSystemMessage((SystemMessage) receivedMessage);
+                    service.handleSystemMessage(( SystemMessage ) receivedMessage);
                 } else {
                     continue;
                 }
-                // hasNewMessage = !messageRead.isEmpty();
+
                 System.out.println(receivedMessage);
             }
         } catch (Exception e) {
@@ -72,6 +81,22 @@ public class ClientSocketThread
             System.err.println("Error sendMessage ClientThread");
         }
     }
+
+    public void showConversations(String conversations) {
+        try{
+            socOut.writeObject(conversations);
+        }catch(Exception e ){
+            System.err.println("Error sendMessage ClientThread");
+        }
+    }
+    public void sendSystemMessage(SystemMessage systemMessage) {
+        try{
+            socOut.writeObject(systemMessage);
+        }catch(Exception e ){
+            System.err.println("Error sendSystemMessage ClientThread");
+        }
+    }
+
 
     public String getUsername() {
         return username;

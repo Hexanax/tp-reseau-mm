@@ -18,28 +18,13 @@ import java.util.Map;
 
 public class Server {
 
-
-    static void doService(Socket clientSocket) {
-        try {
-            BufferedReader socIn = null;
-            socIn = new BufferedReader(
-                    new InputStreamReader(clientSocket.getInputStream()));
-            PrintStream socOut = new PrintStream(clientSocket.getOutputStream());
-            if (true) {
-                String line = socIn.readLine();
-                socOut.println(line);
-
-            }
-        } catch (Exception e) {
-            System.err.println("Error in EchoServer:" + e);
-        }
-    }
-
     public static void main(String args[]){
         ServerSocket listenSocket;
         Service service = new Service();
-        List<ClientSocketThread> clientSocketThreadList = new ArrayList<>();
 
+
+        // TODO : Get all the conversations from database
+        // TODO : Instantiate the conversations set of the service
         if (args.length != 1) {
             System.out.println("Usage: java Server <Server port>");
             System.exit(1);
@@ -47,7 +32,9 @@ public class Server {
         try {
             listenSocket = new ServerSocket(Integer.parseInt(args[0])); //port
             System.out.println("Server ready...");
-            while (true) {
+
+            while (!listenSocket.isClosed()) {
+
                 Socket clientSocket = listenSocket.accept();
                 System.out.println("Connexion from:" + clientSocket.getInetAddress());
                 ClientSocketThread ct = new ClientSocketThread(clientSocket, service);
@@ -57,7 +44,9 @@ public class Server {
         } catch (Exception e) {
             System.err.println("Error in Server:" + e);
         }
+
     }
+
 }
 
 
