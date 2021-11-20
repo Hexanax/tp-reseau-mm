@@ -42,28 +42,34 @@ public class UserInputThread extends Thread{
                     this.run = false;
                 }
 
-                if(line.startsWith("$")){
-                    String[] cmdLine = line.split(":");
+                if(line.startsWith("/")){
+                    if(line.equals("/quit")){
+                        this.run = false;
+                    }
+                    if(line.equals("/help")){
+                        System.out.println("new\t\tCreates a new conversation\nopen\tOpen an existing conversation\nadd\t\tAdd a member to the conversation\nquit\tQuit the client");
+                    }
+                    String[] cmdLine = line.split(" ");
                     if(cmdLine.length <=1) continue;
                     String cmd = cmdLine[0];
                     String complement = cmdLine[1];
                     String sysMessageContent = "";
                     switch (cmd){
-                        case("$new_conversation")->{
+                        case("/new")->{
                             sysMessageContent = senderUserName + ";" +complement;
-                            System.out.println("new conversation to create : " + sysMessageContent);
+                            System.out.println("New conversation name : " + sysMessageContent);
                             socOut.writeObject(SystemMessage.newConversationRequest(sysMessageContent));
                         }
-                        case("$open_conversation")->{
+                        case("/open")->{
                             sysMessageContent = senderUserName + ";" +complement;
                             socOut.writeObject(SystemMessage.conversationConnectRequest(sysMessageContent));
                         }
-                        case("$add_member")->{
+                        case("/add")->{
                             sysMessageContent = senderUserName + ";"+conversationID+";" +complement;
                             socOut.writeObject(SystemMessage.conversationConnectRequest(sysMessageContent));
                         }
                         default -> {
-                            //socOut.writeObject(new Message(senderUserName, conversationID, line));
+                            System.out.println("Invalid command, type /help for all commands");
                         }
                     }
                 }else {

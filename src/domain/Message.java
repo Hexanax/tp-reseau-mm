@@ -23,9 +23,6 @@ public class Message implements Serializable {
         this.date = LocalDate.now();
     }
 
-    public String getUsernameReceiver() {
-        return usernameReceiver;
-    }
 
     public Message(String usernameSender, String destConversation, String message) {
         this.usernameSender = usernameSender;

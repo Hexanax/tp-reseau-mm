@@ -10,7 +10,7 @@ import java.util.*;
 
 
 import static domain.SystemMessageType.LOGIN_REQUEST;
-
+public class Service {
     private List<ClientSocketThread> clientSocketThreadList;
     private Map<String, ClientSocketThread> onlineClientThreadMap;
     private Map<String, Conversation> conversationsMap;
