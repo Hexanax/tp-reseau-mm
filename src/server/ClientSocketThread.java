@@ -17,11 +17,15 @@ import java.util.Set;
 
 import static domain.SystemMessageType.LOGIN_REQUEST;
 
+import static domain.SystemMessageType.LOGIN_REQUEST;
+
 public class ClientSocketThread
         extends Thread {
 
     private String username;
+
     private Set<Conversation> conversationSet;
+
 
     private final Service service;
     private Socket clientSocket;
@@ -50,6 +54,7 @@ public class ClientSocketThread
                     continue;
                 } else if (receivedMessage instanceof Message){
                     if (username != null) {
+
                         System.out.println("Message to be sent : " + receivedMessage );
                         service.sendMessageToOnlineClients((Message) receivedMessage);
                     }
@@ -76,6 +81,7 @@ public class ClientSocketThread
             System.err.println("Error sendMessage ClientThread");
         }
     }
+
     public void showConversations(String conversations) {
         try{
             socOut.writeObject(conversations);
@@ -90,7 +96,6 @@ public class ClientSocketThread
             System.err.println("Error sendSystemMessage ClientThread");
         }
     }
-
 
 
     public String getUsername() {

@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 public class SystemMessage implements Serializable {
     public SystemMessageType type;
+
     public String content;
 
     private SystemMessage(SystemMessageType type, String content) {
@@ -24,6 +25,7 @@ public class SystemMessage implements Serializable {
     public static SystemMessage conversationConnectOK(String connectionDetails){
         return new SystemMessage(SystemMessageType.CONVERSATION_CONNECT_OK, connectionDetails);
     }
+
 
 }
 

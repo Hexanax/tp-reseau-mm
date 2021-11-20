@@ -9,14 +9,22 @@ public class Message implements Serializable {
     private String usernameSender;
     private String destConversation;
 
+
     private String message;
     private LocalDate date;
 
     public Message(long senderID, String usernameSender, String usernameReceiver, String message) {
         this.senderID = senderID;
         this.usernameSender = usernameSender;
+
         this.destConversation = usernameReceiver;
+
         this.message = message;
+        this.date = LocalDate.now();
+    }
+
+    public String getUsernameReceiver() {
+        return usernameReceiver;
     }
 
     public Message(String usernameSender, String destConversation, String message) {
@@ -52,7 +60,9 @@ public class Message implements Serializable {
 
     @Override
     public String toString() {
+
         return usernameSender+ ": " + message;
+
     }
 
     public String getMessage() {

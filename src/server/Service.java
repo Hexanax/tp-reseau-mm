@@ -2,14 +2,14 @@ package server;
 
 import domain.Conversation;
 import domain.Message;
-import domain.Pair;
+
 import domain.SystemMessage;
 
 import java.util.*;
 
-import static domain.SystemMessageType.LOGIN_REQUEST;
 
-public class Service {
+
+import static domain.SystemMessageType.LOGIN_REQUEST;
 
     private List<ClientSocketThread> clientSocketThreadList;
     private Map<String, ClientSocketThread> onlineClientThreadMap;
@@ -62,6 +62,7 @@ public class Service {
     }
 
 
+
     public void addClientSocketThread(ClientSocketThread clientSocketThread) {
         this.clientSocketThreadList.add(clientSocketThread);
     }
@@ -101,6 +102,7 @@ public class Service {
                         onlineClientThreadMap.put(username, cst);
                         return;
                     }
+
                 }
             }
             case LOGIN_OK -> {

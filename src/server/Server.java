@@ -17,9 +17,11 @@ import java.util.List;
 import java.util.Map;
 
 public class Server {
+
     public static void main(String args[]){
         ServerSocket listenSocket;
         Service service = new Service();
+
 
         // TODO : Get all the conversations from database
         // TODO : Instantiate the conversations set of the service
@@ -30,7 +32,9 @@ public class Server {
         try {
             listenSocket = new ServerSocket(Integer.parseInt(args[0])); //port
             System.out.println("Server ready...");
+
             while (!listenSocket.isClosed()) {
+
                 Socket clientSocket = listenSocket.accept();
                 System.out.println("Connexion from:" + clientSocket.getInetAddress());
                 ClientSocketThread ct = new ClientSocketThread(clientSocket, service);

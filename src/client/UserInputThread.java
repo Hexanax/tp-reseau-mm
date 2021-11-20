@@ -13,6 +13,7 @@ public class UserInputThread extends Thread{
     private boolean run = true;
 
     private String senderUserName;
+
     private String conversationID;
 
     UserInputThread(ObjectOutputStream socOut, List<String> userInfo) {
@@ -23,6 +24,7 @@ public class UserInputThread extends Thread{
     UserInputThread(ObjectOutputStream socOut, String username) {
         this.senderUserName = username;
         this.conversationID = "";
+
         this.socOut = socOut;
     }
 
@@ -39,6 +41,7 @@ public class UserInputThread extends Thread{
                 if (line.equals(".")){
                     this.run = false;
                 }
+
                 if(line.startsWith("$")){
                     String[] cmdLine = line.split(":");
                     if(cmdLine.length <=1) continue;
@@ -66,6 +69,7 @@ public class UserInputThread extends Thread{
                 }else {
                     socOut.writeObject(new Message(senderUserName, conversationID, line));
                 }
+
             }
             stdIn.close();
             socOut.close();
