@@ -20,7 +20,6 @@ public class Service {
         onlineClientThreadMap = new HashMap<>();
         conversationsMap = new HashMap<>();
 
-        createConversation("helloworld",Arrays.asList("Matheus","Luiza","Nilson"));
     }
 
     public void createConversation(String conversationID, String creatorUsername){

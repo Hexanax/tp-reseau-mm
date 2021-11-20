@@ -34,7 +34,7 @@ public class UserInputThread extends Thread{
             stdIn = new BufferedReader(new InputStreamReader(System.in));
             if(conversationID.equals("")) {
                 System.out.println("You are not connected to a conversation.");
-                System.out.println("To connect to a conversation, type $open_conversation:<conversationID>.");
+                System.out.println("To connect to a conversation, type /open <conversationID>.");
             }
             while(running()){
                 line=stdIn.readLine();
