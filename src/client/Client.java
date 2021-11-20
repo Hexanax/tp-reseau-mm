@@ -14,6 +14,7 @@ import java.io.*;
 import java.net.*;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 
 public class Client {
@@ -36,9 +37,8 @@ public class Client {
         ObjectOutputStream socOut = null;
 
         try {
-
             // creation socket ==> connexion
-            clientSocket = new Socket(args[0],new Integer(args[1]).intValue());
+            clientSocket = initiateSocket(args, 15);
             socOut= new ObjectOutputStream(clientSocket.getOutputStream());
             List<String> userInfo = login(stdIn, socOut);
             socIn = new ObjectInputStream(clientSocket.getInputStream());
@@ -53,6 +53,8 @@ public class Client {
             System.err.println("Couldn't get I/O for "
                                + "the connection to:"+ args[0]);
             System.exit(1);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
 
         String line;
@@ -73,6 +75,33 @@ public class Client {
         }
       stdIn.close();
       clientSocket.close();
+    }
+
+    private static Socket initiateSocket(String[] args, int maxConnectionAttpemts) throws InterruptedException {
+        String connectionMessage= "Connecting to server";
+        System.out.print(connectionMessage);
+        String[] loading = {".  ", ".. ", "..."};
+        int i = 0;
+        Socket socket = null;
+        while (socket == null && maxConnectionAttpemts > 0){
+            try{
+                System.out.print(loading[i]);
+                socket = new Socket(args[0],new Integer(args[1]).intValue());
+            } catch (Exception e)
+            {
+                i = (i+1) % 3;
+                TimeUnit.MILLISECONDS.sleep(100);
+                System.out.print("\b\b\b");
+                maxConnectionAttpemts--;
+            }
+        }
+        for (i = 0; i < connectionMessage.length() + 3; i++) {
+            System.out.print("\b");
+        }
+        if(maxConnectionAttpemts == 0){
+            System.out.println("Failed to connect to server, please try again later.");
+        }
+        return socket;
     }
 
     private static List<String> login(BufferedReader stdIn, ObjectOutputStream socOut) throws IOException {
