@@ -90,7 +90,9 @@ public class Service {
         destConversation.addMessage(message);
         //destConversation.updateIndexOnlineMembers(onlineMembers);
     }
-
+    private void connectUserToConversation(String username, String connectionDetails){
+        onlineClientThreadMap.get(username).sendSystemMessage(SystemMessage.conversationConnectOK(connectionDetails));
+    }
     public void handleSystemMessage(SystemMessage systemMessage) {
         switch(systemMessage.type){
             case LOGIN_REQUEST -> {
@@ -122,8 +124,27 @@ public class Service {
                     System.out.println("Conversation "+ newConversationID + " created with success");
                 }
                 String details = senderUsername + ";" + newConversationID;
-                onlineClientThreadMap.get(senderUsername).sendSystemMessage(SystemMessage.conversationConnectOK(details));
+                connectUserToConversation(senderUsername,details);
 
+            }
+            case PRIVATE_CONVERSATION_REQUEST -> {
+                String senderUsername  = systemMessage.content.split(";")[0];
+                String requestedUsername  = systemMessage.content.split(";")[1];
+
+                String privateConversationID = senderUsername.compareTo(requestedUsername) < 0 ?
+                        senderUsername+requestedUsername : requestedUsername+senderUsername;
+                String details = senderUsername + ";" + privateConversationID;
+
+                if(conversationsMap.containsKey(privateConversationID)){
+                    connectUserToConversation(senderUsername, details);
+                    // set input thread conversation id == privateconversationID
+                }else{
+                    //create conversation having id == private conversationid
+                    createConversation(privateConversationID,senderUsername);
+
+                    // set input thread conversation id == privateconversationID
+                    connectUserToConversation(senderUsername, details);
+                }
             }
             case CONVERSATION_CONNECT_REQUEST -> {
 
@@ -135,10 +156,15 @@ public class Service {
                     System.out.println("Conversation "+ conversationID + " already existed. You have been added to " +
                             "it.");
                     String details = senderUsername + ";" + conversationID;
-                    onlineClientThreadMap.get(senderUsername).sendSystemMessage(SystemMessage.conversationConnectOK(details));
+                    connectUserToConversation(senderUsername,details);
 
                     return;
                 }else{
+                    //create conversation having id == conversationID
+                    createConversation(conversationID,senderUsername);
+
+                    connectUserToConversation(senderUsername,conversationID);
+
                     System.out.println("Conversation "+ conversationID + " created with success");
                 }
                 /*  - Recuperer l'username demandeur
@@ -155,7 +181,8 @@ public class Service {
                 *
                 */
 
-            } case ADD_MEMBER -> {
+            }
+            case ADD_MEMBER -> {
                 // first case contains the name of the newConversation. All the others contain usernames to add
                 String senderUsername  = systemMessage.content.split(";")[0];
                 String conversationID  = systemMessage.content.split(";")[1];
