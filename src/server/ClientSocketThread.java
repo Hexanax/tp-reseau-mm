@@ -50,17 +50,18 @@ public class ClientSocketThread
                     continue;
                 } else if (receivedMessage instanceof Message){
                     if (username != null) {
+                        System.out.println("Message to be sent : " + receivedMessage );
                         service.sendMessageToOnlineClients((Message) receivedMessage);
                     }
                 } else if (receivedMessage instanceof SystemMessage){
                     if (LOGIN_REQUEST.equals(((SystemMessage) receivedMessage).type)) {
-                        username = ((SystemMessage)receivedMessage).senderUsername;
+                        username = ((SystemMessage)receivedMessage).content;
                     }
-                    service.handleSystemMessage((SystemMessage) receivedMessage);
+                    service.handleSystemMessage(( SystemMessage ) receivedMessage);
                 } else {
                     continue;
                 }
-                // hasNewMessage = !messageRead.isEmpty();
+
                 System.out.println(receivedMessage);
             }
         } catch (Exception e) {
@@ -75,6 +76,22 @@ public class ClientSocketThread
             System.err.println("Error sendMessage ClientThread");
         }
     }
+    public void showConversations(String conversations) {
+        try{
+            socOut.writeObject(conversations);
+        }catch(Exception e ){
+            System.err.println("Error sendMessage ClientThread");
+        }
+    }
+    public void sendSystemMessage(SystemMessage systemMessage) {
+        try{
+            socOut.writeObject(systemMessage);
+        }catch(Exception e ){
+            System.err.println("Error sendSystemMessage ClientThread");
+        }
+    }
+
+
 
     public String getUsername() {
         return username;

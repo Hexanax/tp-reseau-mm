@@ -23,17 +23,31 @@ public class Service {
         createConversation("helloworld",Arrays.asList("Matheus","Luiza","Nilson"));
     }
 
-    public void testCreateConversation(String conversationID, List<String>membersUsernames){
-        createConversation(conversationID, membersUsernames);
+    public void createConversation(String conversationID, String creatorUsername){
+        if(conversationsMap.containsKey(conversationID)){
+            System.out.println("Conversation : " + conversationID + " already exists.");
+            return;
+        }
+        Conversation newConversation = new Conversation(conversationID, creatorUsername);
+        conversationsMap.put(conversationID,newConversation);
     }
-    public void createConversation(String conversationID, List<String>membersUsernames){
-        if (membersUsernames.size() < 2){
-            System.out.println("A conversation needs more than one interlocutor.");
+    public void createConversation(String conversationID, List<String> membersUsernames){
+        if(conversationsMap.containsKey(conversationID)){
+            System.out.println("Conversation : " + conversationID + " already exists.");
             return;
         }
         Conversation newConversation = new Conversation(conversationID, membersUsernames);
         conversationsMap.put(conversationID,newConversation);
     }
+
+    public void showConversationsToClient(ClientSocketThread clientSocketThread){
+        StringBuilder conversations  = new StringBuilder();
+        for (Conversation conversation : conversationsMap.values()) {
+            conversations.append(conversation);
+        }
+        clientSocketThread.showConversations(conversations.toString());
+    }
+
 
     public void addMemberToConversation(String conversationID, String memberID){
         Conversation  conversation = conversationsMap.get(conversationID);
@@ -61,16 +75,16 @@ public class Service {
         Conversation destConversation = conversationsMap.get(message.getDestConversation());
         if(destConversation == null) return;
 
-        List<Pair<String, Integer>> members = destConversation.getMembers();
+        Map<String,Integer> members = destConversation.getMembers();
         List<String> onlineMembers = new ArrayList<>();
 
         // Send the message to the connected members
-        for (Pair<String, Integer> member: members) {
+        for (String memberUsername: members.keySet()) {
             ClientSocketThread cst;
-            cst = onlineClientThreadMap.get(member.getKey());
+            cst = onlineClientThreadMap.get(memberUsername);
             if(cst == null) continue; // TODO : saveMessage
-            if( ! member.getKey().equals(message.getUsernameSender()))cst.sendMessage(message);
-            onlineMembers.add(member.getKey());
+            if( ! memberUsername.equals(message.getUsernameSender()))cst.sendMessage(message);
+            onlineMembers.add(memberUsername);
         }
 
         destConversation.addMessage(message);
@@ -80,7 +94,7 @@ public class Service {
     public void handleSystemMessage(SystemMessage systemMessage) {
         switch(systemMessage.type){
             case LOGIN_REQUEST -> {
-                String username = systemMessage.senderUsername;
+                String username = systemMessage.content;
                 System.out.println("Received login request from: " + username);
                 for (ClientSocketThread cst : clientSocketThreadList) {
                     if (cst.getUsername() != null && cst.getUsername().equals(username)){
@@ -89,9 +103,70 @@ public class Service {
                     }
                 }
             }
-            case LOGIN_ACCEPT -> {
-                System.out.println("LOGIN_ACCEPT MESSAGE");
+            case LOGIN_OK -> {
+                System.out.println("LOGIN_OK MESSAGE");
             }
+            case NEW_CONVERSATION_REQUEST -> {
+                // first case contains the name of the newConversation. All the others contain usernames to add
+                String senderUsername  = systemMessage.content.split(";")[0];
+                String newConversationID  = systemMessage.content.split(";")[1];
+
+                if(conversationsMap.containsKey(newConversationID)){
+                    addMemberToConversation(newConversationID, senderUsername);
+                    System.out.println("Conversation "+ newConversationID + " already existed. You have been added to " +
+                            "it.");
+                }else{
+                    createConversation(newConversationID, senderUsername);
+                    addMemberToConversation(newConversationID, senderUsername);
+                    System.out.println("Conversation "+ newConversationID + " created with success");
+                }
+                String details = senderUsername + ";" + newConversationID;
+                onlineClientThreadMap.get(senderUsername).sendSystemMessage(SystemMessage.conversationConnectOK(details));
+
+            }
+            case CONVERSATION_CONNECT_REQUEST -> {
+
+                String senderUsername  = systemMessage.content.split(";")[0];
+                String conversationID  = systemMessage.content.split(";")[1];
+
+                if(conversationsMap.containsKey(conversationID)){
+                    addMemberToConversation(conversationID, senderUsername);
+                    System.out.println("Conversation "+ conversationID + " already existed. You have been added to " +
+                            "it.");
+                    String details = senderUsername + ";" + conversationID;
+                    onlineClientThreadMap.get(senderUsername).sendSystemMessage(SystemMessage.conversationConnectOK(details));
+
+                    return;
+                }else{
+                    System.out.println("Conversation "+ conversationID + " created with success");
+                }
+                /*  - Recuperer l'username demandeur
+                    - Vers quelle conversation il souhaite se connecter?
+                        - Existante ?
+                            - OUI-> Déjà membre?
+                                - oui -> connecter
+                                - non -> add aux membres
+                            - NON
+                                - Create new conversation avec le nom recupéré
+                                - add l'user à la conversation
+                                - demander à l'user de renseigner les autres users à add dans la conversation
+                                - add les users à la conversation
+                *
+                */
+
+            } case ADD_MEMBER -> {
+                // first case contains the name of the newConversation. All the others contain usernames to add
+                String senderUsername  = systemMessage.content.split(";")[0];
+                String conversationID  = systemMessage.content.split(";")[1];
+                String newMemberUsername  = systemMessage.content.split(";")[2];
+
+                if(conversationsMap.containsKey(conversationID)){
+                    addMemberToConversation(conversationID, newMemberUsername);
+                    return;
+                }
+                System.out.println("Conversation "+ conversationID + " does not exist.");
+            }
+
 
             default -> throw new IllegalStateException("Unexpected value: " + systemMessage.type);
         }

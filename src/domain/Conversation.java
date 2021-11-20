@@ -1,27 +1,35 @@
 package domain;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Conversation {
     private static Integer index;
 
     private String conversationID;
     // For each user, we save the index of the last message they read
-    private List<Pair<String, Integer>> members;
+    private Map<String, Integer> members;
     private List<Message> messages;
 
     public Conversation(String conversationID, List<String> usernamesUsers){
         this.conversationID = conversationID;
-        this.members = new ArrayList<>();
+        this.members = new HashMap<>();
         this.messages = new ArrayList<>();
         index = 0;
         for (String username:usernamesUsers) {
-            Pair <String, Integer> temp = new Pair(username,0);
-            this.members.add(temp);
+            this.members.put(username,index);
         }
     }
 
+    public Conversation(String conversationID, String creatorUsername) {
+        this.conversationID = conversationID;
+        this.members = new HashMap<>();
+        this.messages = new ArrayList<>();
+        index = 0;
+        this.members.put(creatorUsername,index);
+    }
 
     public void addMessage(Message message){
         messages.add(message);
@@ -39,28 +47,45 @@ public class Conversation {
         System.out.println("======================");
         System.out.println("Conversation : " + conversationID);
         System.out.println("Users : ");
-        for (Pair<String, Integer> member : members ) {
-            System.out.println(" > " + member.getKey());
+        for (String memberUsername : members.keySet() ) {
+            System.out.println(" > " + memberUsername);
         }
         System.out.println("======================");
         for (Message msg:messages) {
             System.out.println(msg);
         }
     }
+    public void showUnreadMessages(String memberUsername){
+        Integer index = members.get(memberUsername);
+        System.out.println("======================");
+        System.out.println("Conversation : " + conversationID);
+        System.out.println("Unread messages");
+        System.out.println("======================");
+        for (int i = index; i < messages.size() ; i++) {
+            System.out.println(messages.get(i));
+        }
+    }
 
-    public List<Pair<String, Integer>> getMembers() {
+    public Map<String, Integer> getMembers() {
         return members;
     }
 
     public Integer getIndex(){
         return index;
     }
+
     public void addMember(String username){
-        this.members.add(new Pair<>(username, getIndex()));
+        this.members.put(username, getIndex());
     }
 
     public void removeMember(String username){
-        this.members.removeIf(member -> member.getKey().equals(username));
+        this.members.remove(username);
     }
 
+    @Override
+    public String toString() {
+        return "Conversation{" +
+                "conversationID='" + conversationID + '\'' +
+                '}';
+    }
 }

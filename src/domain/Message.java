@@ -52,7 +52,7 @@ public class Message implements Serializable {
 
     @Override
     public String toString() {
-        return usernameSender + ": " + message;
+        return usernameSender+ ": " + message;
     }
 
     public String getMessage() {
