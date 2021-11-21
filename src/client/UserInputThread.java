@@ -60,6 +60,11 @@ public class UserInputThread extends Thread{
                             System.out.println("New conversation name : " + sysMessageContent);
                             socOut.writeObject(SystemMessage.newConversationRequest(sysMessageContent));
                         }
+                        case("/private")->{
+                            sysMessageContent = senderUserName + ";" +complement;
+                            System.out.println("New conversation with : " + sysMessageContent);
+                            socOut.writeObject(SystemMessage.privateConversationRequest(sysMessageContent));
+                        }
                         case("/open")->{
                             sysMessageContent = senderUserName + ";" +complement;
                             socOut.writeObject(SystemMessage.conversationConnectRequest(sysMessageContent));
