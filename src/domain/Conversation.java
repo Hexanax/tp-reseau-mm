@@ -11,6 +11,7 @@ public class Conversation {
     private String conversationID;
     // For each user, we save the index of the last message they read
     private Map<String, Integer> members;
+
     private List<Message> messages;
 
     public Conversation(String conversationID, List<String> usernamesUsers){
@@ -34,6 +35,10 @@ public class Conversation {
     public void addMessage(Message message){
         messages.add(message);
         index++;
+    }
+
+    public List<Message> getMessages() {
+        return messages;
     }
 
     public void updateIndexOnlineMembers(List<String> onlineMembers){

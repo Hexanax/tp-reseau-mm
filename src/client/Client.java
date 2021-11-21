@@ -79,15 +79,17 @@ public class Client {
                 }else if(incomingMessage instanceof SystemMessage){
                     handleSystemMessage((SystemMessage) incomingMessage, userInputThread);
 
+                } else
+                {
+                    System.err.println("Received unknown message"+ incomingMessage);
                 }
             if(!userInputThread.running()){
                 run = false;
             }
             } catch (Exception e){
-                System.err.println("Error in EchoClient: "+ e);
+                System.err.println("Error in Client: "+ e);
             }
         }
-
       clientSocket.close();
     }
 

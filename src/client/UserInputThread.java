@@ -38,13 +38,11 @@ public class UserInputThread extends Thread{
             }
             while(running()){
                 line=stdIn.readLine();
-                if (line.equals(".")){
-                    this.run = false;
-                }
 
                 if(line.startsWith("/")){
                     if(line.equals("/quit")){
                         this.run = false;
+                        continue;
                     }
                     if(line.equals("/help")){
                         System.out.println("new\t\tCreates a new conversation\nopen\tOpen an existing conversation\nadd\t\tAdd a member to the conversation\nquit\tQuit the client");
@@ -70,6 +68,10 @@ public class UserInputThread extends Thread{
                             socOut.writeObject(SystemMessage.conversationConnectRequest(sysMessageContent));
                         }
                         case("/add")->{
+                            if(conversationID.equals("")){
+                                System.err.println("Cannot add a user when you are not in a conversation!");
+                                continue;
+                            }
                             sysMessageContent = senderUserName + ";"+conversationID+";" +complement;
                             socOut.writeObject(SystemMessage.conversationConnectRequest(sysMessageContent));
                         }

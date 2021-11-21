@@ -22,6 +22,11 @@ public class Service {
 
     }
 
+    /**
+     * createConversation creates a new conversation
+     * @param conversationID The id of the conversation
+     * @param creatorUsername The username of who created the conversation
+     */
     public void createConversation(String conversationID, String creatorUsername){
         if(conversationsMap.containsKey(conversationID)){
             System.out.println("Conversation : " + conversationID + " already exists.");
@@ -30,6 +35,8 @@ public class Service {
         Conversation newConversation = new Conversation(conversationID, creatorUsername);
         conversationsMap.put(conversationID,newConversation);
     }
+
+
     public void createConversation(String conversationID, List<String> membersUsernames){
         if(conversationsMap.containsKey(conversationID)){
             System.out.println("Conversation : " + conversationID + " already exists.");
@@ -44,6 +51,7 @@ public class Service {
         for (Conversation conversation : conversationsMap.values()) {
             conversations.append(conversation);
         }
+        clientSocketThread.showConversations(conversations.toString());
         clientSocketThread.showConversations(conversations.toString());
     }
 
@@ -66,33 +74,51 @@ public class Service {
         this.clientSocketThreadList.add(clientSocketThread);
     }
 
-    public void sendMessageToOnlineClients(Message message) {
+    /**
+     * handleMessage handles the message that was sent to the server
+     * @param message is the message that must be handled
+     */
+    public void handleMessage(Message message) {
         if (message == null) return ;
         System.out.println(message);
-        // Send message to all clients
 
         // We get the members of the conversation
         Conversation destConversation = conversationsMap.get(message.getDestConversation());
         if(destConversation == null) return;
+        sendMessageToOnlineClients(destConversation, message);
+        destConversation.addMessage(message);
+    }
 
-        Map<String,Integer> members = destConversation.getMembers();
+    /**
+     * sendMessageToOnlineClients sends a message to all concerned online clients
+     * @param conversation the conversation the message is in which contains the memebrs that will recieve the message
+     * @param message the message that will be sent
+     */
+    private void sendMessageToOnlineClients(Conversation conversation, Message message) {
+
+        // Send message to all clients
+        Map<String,Integer> members = conversation.getMembers();
         List<String> onlineMembers = new ArrayList<>();
 
         // Send the message to the connected members
         for (String memberUsername: members.keySet()) {
             ClientSocketThread cst;
             cst = onlineClientThreadMap.get(memberUsername);
-            if(cst == null) continue; // TODO : saveMessage
+            if(cst == null) continue;
             if( ! memberUsername.equals(message.getUsernameSender()))cst.sendMessage(message);
             onlineMembers.add(memberUsername);
         }
-
-        destConversation.addMessage(message);
-        //destConversation.updateIndexOnlineMembers(onlineMembers);
     }
+
+    /**
+     * Connects a user to a conversation
+     * @param username the username of the user
+     * @param connectionDetails the details of the connection
+     */
     private void connectUserToConversation(String username, String connectionDetails){
         onlineClientThreadMap.get(username).sendSystemMessage(SystemMessage.conversationConnectOK(connectionDetails));
     }
+
     public void handleSystemMessage(SystemMessage systemMessage) {
         switch(systemMessage.type){
             case LOGIN_REQUEST -> {
@@ -157,7 +183,11 @@ public class Service {
                             "it.");
                     String details = senderUsername + ";" + conversationID;
                     connectUserToConversation(senderUsername,details);
-
+                    ClientSocketThread cst = onlineClientThreadMap.get(senderUsername);
+                    Conversation conversation = conversationsMap.get(conversationID);
+                    for ( Message message : conversation.getMessages()) {
+                        cst.sendMessage(message);
+                    }
                     return;
                 }else{
                     //create conversation having id == conversationID
