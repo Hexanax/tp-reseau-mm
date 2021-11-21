@@ -5,6 +5,7 @@ import domain.Message;
 
 import domain.SystemMessage;
 
+import java.io.IOException;
 import java.util.*;
 
 
@@ -14,12 +15,13 @@ public class Service {
     private List<ClientSocketThread> clientSocketThreadList;
     private Map<String, ClientSocketThread> onlineClientThreadMap;
     private Map<String, Conversation> conversationsMap;
+    private Repository repository;
 
     public Service() {
         clientSocketThreadList = new ArrayList<>();
         onlineClientThreadMap = new HashMap<>();
         conversationsMap = new HashMap<>();
-
+        repository = new Repository();
     }
 
     /**
@@ -34,6 +36,7 @@ public class Service {
         }
         Conversation newConversation = new Conversation(conversationID, creatorUsername);
         conversationsMap.put(conversationID,newConversation);
+        repository.createConversation(newConversation);
     }
 
 
@@ -190,7 +193,7 @@ public class Service {
                     }
                     return;
                 }else{
-                    //create conversation having id == conversationID
+                    // create conversation having id == conversationID
                     createConversation(conversationID,senderUsername);
 
                     connectUserToConversation(senderUsername,conversationID);

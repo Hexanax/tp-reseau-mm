@@ -1,5 +1,7 @@
 package domain;
 
+import org.dizitart.no2.objects.Id;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -7,10 +9,10 @@ import java.util.Map;
 
 public class Conversation {
     private static Integer index;
-
-    private String conversationID;
+    @Id
+    private final String conversationID;
     // For each user, we save the index of the last message they read
-    private Map<String, Integer> members;
+    private final Map<String, Integer> members;
 
     private List<Message> messages;
 
@@ -30,6 +32,10 @@ public class Conversation {
         this.messages = new ArrayList<>();
         index = 0;
         this.members.put(creatorUsername,index);
+    }
+
+    public String getConversationID() {
+        return conversationID;
     }
 
     public void addMessage(Message message){
