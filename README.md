@@ -5,21 +5,28 @@ Binome TP programmation réseaux de Matthieu et Matheus
 ## Checklist
 
 ✔️ Multi-thread
+
 - Spécifiez les principes architecturaux de votre application et de votre protocole de
 communication. Comme cela se passe par sockets c'est à vous de tout définir pour votre
 système distribué qui implante une fonctionnalité de chat. Les utilisateurs doivent pouvoir se
 joindre dynamiquement à une conversation. Que se passe t il si on envoie un message à une
 personne qui n'est pas en ligne ? Vous devez prévoir les multiples use-cases que vous allez
 implanter.
+
 - Décrire ensuite les détails d'implantation du système de chat en utilisant des sockets.
+
 ✔️ Implantez une interface graphique pour ce système de chat. 
+
 - Ajoutez une fonctionnalité d'historique: quand un nouvel utilisateur rejoins le système, cet
 utilisateur reçoit en premier les messages qui ont été échangé quand il n'était pas en ligne.
 Votre première version sera éphémère, c'est à dire que quand le système s'arrête
 l'historique des messages échangés disparaît.
+
 - Implantez une version persistante des messages échangés. C'est à dire que quand le serveur
 s'arrête puis redémarre cette histoire est restaurée.
+
 ✔️ Implantez une version distribuée avec communication de groupe 
+
 - Support multicast.
 
 
