@@ -13,6 +13,7 @@ public class Database {
 
     private final String DATA_DIR = "data";
 public Database() {
+    data = new Data();
     try{
         FileInputStream fi = new FileInputStream(new File(DATA_DIR));
         ObjectInputStream oi = new ObjectInputStream(fi);
@@ -22,6 +23,15 @@ public Database() {
 
         oi.close();
         fi.close();
+
+    } catch (FileNotFoundException e){
+        System.out.println("Database not found, creating a new one");
+        try{
+            writeData(data);
+        } catch (IOException ioException) {
+            System.err.println("Error creating a new database file");
+            ioException.printStackTrace();
+        }
     } catch (IOException | ClassNotFoundException e) {
         e.printStackTrace();
     }
@@ -30,27 +40,25 @@ public Database() {
         public void save(Data data) {
 
             try {
-                FileOutputStream f = new FileOutputStream(new File(DATA_DIR));
-                ObjectOutputStream o = new ObjectOutputStream(f);
-
-                // Write objects to file
-                o.writeObject(data);
-
-                o.close();
-                f.close();
-
-                FileInputStream fi = new FileInputStream(new File("myObjects.txt"));
-                ObjectInputStream oi = new ObjectInputStream(fi);
-
+                writeData(data);
 
             } catch (FileNotFoundException e) {
-                System.out.println("File not found");
+                System.err.println("File not found");
             } catch (IOException e) {
-                System.out.println("Error initializing stream");
+                System.err.println("Error initializing stream");
             }
 
         }
+    private void writeData(Data data) throws  IOException {
+        FileOutputStream f = new FileOutputStream(new File(DATA_DIR));
+        ObjectOutputStream o = new ObjectOutputStream(f);
 
+        // Write objects to file
+        o.writeObject(data);
+
+        o.close();
+        f.close();
+    }
     public Data getData() {
         return data;
     }

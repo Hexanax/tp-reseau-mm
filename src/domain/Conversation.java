@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 public class Conversation implements Serializable {
-    private static Integer index;
+    private Integer index = 0;
 
     private String conversationID;
     // For each user, we save the index of the last message they read
@@ -84,7 +84,7 @@ public class Conversation implements Serializable {
         if (members.keySet().contains(username)) {
             return;
         }
-        this.members.put(username, getIndex());
+        this.members.put(username, 0);
     }
 
     public void removeMember(String username){
