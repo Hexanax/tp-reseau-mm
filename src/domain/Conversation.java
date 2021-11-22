@@ -1,11 +1,12 @@
 package domain;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class Conversation {
+public class Conversation implements Serializable {
     private static Integer index;
 
     private String conversationID;
@@ -80,6 +81,9 @@ public class Conversation {
     }
 
     public void addMember(String username){
+        if (members.keySet().contains(username)) {
+            return;
+        }
         this.members.put(username, getIndex());
     }
 
