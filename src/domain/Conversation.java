@@ -1,12 +1,13 @@
 package domain;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class Conversation {
-    private static Integer index;
+public class Conversation implements Serializable {
+    private Integer index = 0;
 
     private String conversationID;
     // For each user, we save the index of the last message they read
@@ -80,7 +81,10 @@ public class Conversation {
     }
 
     public void addMember(String username){
-        this.members.put(username, getIndex());
+        if (members.keySet().contains(username)) {
+            return;
+        }
+        this.members.put(username, 0);
     }
 
     public void removeMember(String username){

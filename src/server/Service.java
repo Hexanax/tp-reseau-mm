@@ -14,11 +14,13 @@ public class Service {
     private List<ClientSocketThread> clientSocketThreadList;
     private Map<String, ClientSocketThread> onlineClientThreadMap;
     private Map<String, Conversation> conversationsMap;
-
+    private Database db;
     public Service() {
         clientSocketThreadList = new ArrayList<>();
         onlineClientThreadMap = new HashMap<>();
         conversationsMap = new HashMap<>();
+        db = new Database();
+        conversationsMap = db.getData().conversations;
 
     }
 
@@ -34,6 +36,7 @@ public class Service {
         }
         Conversation newConversation = new Conversation(conversationID, creatorUsername);
         conversationsMap.put(conversationID,newConversation);
+        db.save(new Data(conversationsMap));
     }
 
 
@@ -60,6 +63,7 @@ public class Service {
         Conversation  conversation = conversationsMap.get(conversationID);
         if(conversation == null) return;
         conversation.addMember(memberID);
+        db.save(new Data(conversationsMap));
     }
 
     public void removeMemberOfConversation(String conversationID, String memberID){
@@ -87,6 +91,7 @@ public class Service {
         if(destConversation == null) return;
         sendMessageToOnlineClients(destConversation, message);
         destConversation.addMessage(message);
+        db.save(new Data(conversationsMap));
     }
 
     /**
@@ -151,7 +156,7 @@ public class Service {
                 }
                 String details = senderUsername + ";" + newConversationID;
                 connectUserToConversation(senderUsername,details);
-
+                db.save(new Data(conversationsMap));
             }
             case PRIVATE_CONVERSATION_REQUEST -> {
                 String senderUsername  = systemMessage.content.split(";")[0];
@@ -171,6 +176,7 @@ public class Service {
                     // set input thread conversation id == privateconversationID
                     connectUserToConversation(senderUsername, details);
                 }
+                db.save(new Data(conversationsMap));
             }
             case CONVERSATION_CONNECT_REQUEST -> {
 
@@ -210,7 +216,7 @@ public class Service {
                                 - add les users à la conversation
                 *
                 */
-
+                db.save(new Data(conversationsMap));
             }
             case ADD_MEMBER -> {
                 // first case contains the name of the newConversation. All the others contain usernames to add
