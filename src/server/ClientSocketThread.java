@@ -68,8 +68,17 @@ public class ClientSocketThread
 
                 System.out.println(receivedMessage);
             }
-        } catch (Exception e) {
-            System.err.println("Error in EchoServer:" + e);
+        }  catch (EOFException e){
+            System.out.println("User "+ this.getUsername()+" logged out, closing socket...");
+            service.disconnectUser(this.getUsername());
+        }
+        catch (Exception e) {
+            System.err.println("Error in ClientSocket Thread:" + e);
+        }
+        try{
+            clientSocket.close();
+        }catch (Exception e) {
+            System.err.println("Unable to close socket in ClientSocketThread:" + e);
         }
     }
 
@@ -77,7 +86,7 @@ public class ClientSocketThread
         try{
             socOut.writeObject(messageSend);
         }catch(Exception e ){
-            System.err.println("Error sendMessage ClientThread");
+            System.err.println("Error sendMessage ClientThread:"+e);
         }
     }
 
@@ -85,14 +94,14 @@ public class ClientSocketThread
         try{
             socOut.writeObject(conversations);
         }catch(Exception e ){
-            System.err.println("Error sendMessage ClientThread");
+            System.err.println("Error sendMessage ClientThread: " + e);
         }
     }
     public void sendSystemMessage(SystemMessage systemMessage) {
         try{
             socOut.writeObject(systemMessage);
         }catch(Exception e ){
-            System.err.println("Error sendSystemMessage ClientThread");
+            System.err.println("Error sendSystemMessage ClientThread: "+e);
         }
     }
 

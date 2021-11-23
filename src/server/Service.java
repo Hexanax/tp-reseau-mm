@@ -124,6 +124,11 @@ public class Service {
         onlineClientThreadMap.get(username).sendSystemMessage(SystemMessage.conversationConnectOK(connectionDetails));
     }
 
+    public void disconnectUser(String username){
+        this.clientSocketThreadList.remove(onlineClientThreadMap.get(username));
+        this.onlineClientThreadMap.remove(username);
+    }
+
     public void handleSystemMessage(SystemMessage systemMessage) {
         switch(systemMessage.type){
             case LOGIN_REQUEST -> {

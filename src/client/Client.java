@@ -86,7 +86,11 @@ public class Client {
             if(!userInputThread.running()){
                 run = false;
             }
-            } catch (Exception e){
+            } catch (SocketException e) {
+                System.out.println("Socket is closed");
+                run = false;
+            }
+            catch (Exception e){
                 System.err.println("Error in Client: "+ e);
             }
         }
