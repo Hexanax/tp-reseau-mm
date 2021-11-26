@@ -7,8 +7,13 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
+/**
+ * Database is the layer responsible for storing data in the server
+ */
 public class Database {
-
+    /**
+     * The data stored by the database
+     */
     private Data data;
 
     private final String DATA_DIR = "data";

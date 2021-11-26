@@ -8,8 +8,9 @@ import domain.SystemMessage;
 import java.util.*;
 
 
-
-import static domain.SystemMessageType.LOGIN_REQUEST;
+/**
+ * Service is the layer that handles all business logic of the app
+ */
 public class Service {
     private List<ClientSocketThread> clientSocketThreadList;
     private Map<String, ClientSocketThread> onlineClientThreadMap;
@@ -39,7 +40,11 @@ public class Service {
         db.save(new Data(conversationsMap));
     }
 
-
+    /**
+     * createConversation creates a new conversation
+     * @param conversationID the id of the converastion
+     * @param membersUsernames the usernames of the members in the conversation
+     */
     public void createConversation(String conversationID, List<String> membersUsernames){
         if(conversationsMap.containsKey(conversationID)){
             System.out.println("Conversation : " + conversationID + " already exists.");
@@ -49,6 +54,10 @@ public class Service {
         conversationsMap.put(conversationID,newConversation);
     }
 
+    /**
+     * showConversationsToClient sends a list of conversations to the client
+     * @param clientSocketThread the socket used to communicate to the client
+     */
     public void showConversationsToClient(ClientSocketThread clientSocketThread){
         StringBuilder conversations  = new StringBuilder();
         for (Conversation conversation : conversationsMap.values()) {
@@ -59,6 +68,11 @@ public class Service {
     }
 
 
+    /**
+     * addMemberToConversation adds a member to the conversation
+     * @param conversationID id of the converation
+     * @param memberID id (also known as username) of them member
+     */
     public void addMemberToConversation(String conversationID, String memberID){
         Conversation  conversation = conversationsMap.get(conversationID);
         if(conversation == null) return;
@@ -66,6 +80,10 @@ public class Service {
         db.save(new Data(conversationsMap));
     }
 
+    /** removeMemberOfConversation removes a member from a conversation
+     * @param conversationID id of the converation
+     * @param memberID id (also known as username) of them member
+     */
     public void removeMemberOfConversation(String conversationID, String memberID){
         Conversation  conversation = conversationsMap.get(conversationID);
         if(conversation == null) return;
@@ -73,7 +91,10 @@ public class Service {
     }
 
 
-
+    /**
+     * addClientSocketThread adds the client socket thread to the list of threads that the service is aware of
+     * @param clientSocketThread the socket thread of the client
+     */
     public void addClientSocketThread(ClientSocketThread clientSocketThread) {
         this.clientSocketThreadList.add(clientSocketThread);
     }
@@ -124,11 +145,19 @@ public class Service {
         onlineClientThreadMap.get(username).sendSystemMessage(SystemMessage.conversationConnectOK(connectionDetails));
     }
 
+    /**
+     * disconnectUser disconnects the user from the server gracefully
+     * @param username the username that is disconnecting
+     */
     public void disconnectUser(String username){
         this.clientSocketThreadList.remove(onlineClientThreadMap.get(username));
         this.onlineClientThreadMap.remove(username);
     }
 
+    /**
+     * handleSystemMessage handles a system message (command) from a user
+     * @param systemMessage
+     */
     public void handleSystemMessage(SystemMessage systemMessage) {
         switch(systemMessage.type){
             case LOGIN_REQUEST -> {
