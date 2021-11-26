@@ -59,7 +59,7 @@ public class ClientSocketThread
                     }
                 } else if (receivedMessage instanceof SystemMessage){
                     if (LOGIN_REQUEST.equals(((SystemMessage) receivedMessage).type)) {
-                        username = ((SystemMessage)receivedMessage).content;
+                        username = ((SystemMessage)receivedMessage).params.get("username");
                     }
                     service.handleSystemMessage(( SystemMessage ) receivedMessage);
                 } else {

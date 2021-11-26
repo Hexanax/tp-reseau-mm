@@ -13,10 +13,8 @@ import server.ClientSocketThread;
 import java.io.*;
 import java.net.*;
 
-import java.util.ArrayList;
+import java.util.*;
 
-import java.util.Arrays;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 
@@ -46,7 +44,7 @@ public class Client {
             // creation socket ==> connexion
             clientSocket = initiateSocket(args, 15);
             socOut= new ObjectOutputStream(clientSocket.getOutputStream());
-            List<String> userInfo = new ArrayList<>();
+//            List<String> userInfo = new ArrayList<>();
             //userInfo.add();
             socIn = new ObjectInputStream(clientSocket.getInputStream());
 
@@ -139,28 +137,29 @@ public class Client {
         return senderUserName;
     }
 
-    private static String conversationConnexion(ObjectOutputStream socOut) throws IOException{
-        BufferedReader stdIn = new BufferedReader(new InputStreamReader(System.in));
-        String conversationID = "";
-        String details = "";
-        try{
-            System.out.println("Conversation ID : ");
-            conversationID = stdIn.readLine();
-
-            System.out.println("usernames to add on this format: ");
-            details = conversationID + ";" + stdIn.readLine();
-            socOut.writeObject(SystemMessage.newConversationRequest(details));
-        }catch(IOException e){
-            System.err.println("Error in Client : " + e);
-        }
-        return conversationID;
-    }
+//    private static String conversationConnexion(ObjectOutputStream socOut) throws IOException{
+//        BufferedReader stdIn = new BufferedReader(new InputStreamReader(System.in));
+//        String conversationID = "";
+//        String details = "";
+//        try{
+//            System.out.println("Conversation ID : ");
+//            conversationID = stdIn.readLine();
+//
+//            System.out.println("usernames to add on this format: ");
+//            details = conversationID + ";" + stdIn.readLine();
+//            Map<String, String> details = Map.of("newConversationID", conversationID)
+//            socOut.writeObject(SystemMessage.newConversationRequest(details));
+//        }catch(IOException e){
+//            System.err.println("Error in Client : " + e);
+//        }
+//        return conversationID;
+//    }
 
     private static void handleSystemMessage(SystemMessage systemMessage, UserInputThread userInputThread){
         switch(systemMessage.type) {
             case CONVERSATION_CONNECT_OK -> {
 
-                String conversationID = systemMessage.content.split(";")[1];
+                String conversationID = systemMessage.params.get("conversationID");
                 userInputThread.setConversationID(conversationID);
                 System.out.println("Connected to " + conversationID);
 

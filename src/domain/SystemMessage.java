@@ -1,32 +1,35 @@
 package domain;
 
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 
 public class SystemMessage implements Serializable {
     public SystemMessageType type;
 
-    public String content;
+    public Map<String, String> params;
 
-    private SystemMessage(SystemMessageType type, String content) {
+    private SystemMessage(SystemMessageType type, Map<String, String> params) {
         this.type = type;
-        this.content = content;
+        params = new HashMap<>();
     }
 
-    public static SystemMessage newLoginRequest(String senderUsername){
-        return new SystemMessage(SystemMessageType.LOGIN_REQUEST, senderUsername);
+
+    public static SystemMessage newLoginRequest(String username){
+        return new SystemMessage(SystemMessageType.LOGIN_REQUEST, Map.of("username", username));
     }
-    public static SystemMessage newConversationRequest(String conversationDetails){
-        return new SystemMessage(SystemMessageType.NEW_CONVERSATION_REQUEST, conversationDetails);
+    public static SystemMessage newConversationRequest(Map<String, String> parameters){
+        return new SystemMessage(SystemMessageType.NEW_CONVERSATION_REQUEST, parameters);
     }
-    public static SystemMessage privateConversationRequest(String conversationDetails){
-        return new SystemMessage(SystemMessageType.PRIVATE_CONVERSATION_REQUEST, conversationDetails);
+    public static SystemMessage privateConversationRequest(Map<String, String> parameters){
+        return new SystemMessage(SystemMessageType.PRIVATE_CONVERSATION_REQUEST, parameters);
     }
-    public static SystemMessage conversationConnectRequest(String connectionDetails){
-        return new SystemMessage(SystemMessageType.CONVERSATION_CONNECT_REQUEST, connectionDetails);
+    public static SystemMessage conversationConnectRequest(Map<String, String> parameters){
+        return new SystemMessage(SystemMessageType.CONVERSATION_CONNECT_REQUEST, parameters);
     }
 
-    public static SystemMessage conversationConnectOK(String connectionDetails){
-        return new SystemMessage(SystemMessageType.CONVERSATION_CONNECT_OK, connectionDetails);
+    public static SystemMessage conversationConnectOK(Map<String, String> parameters){
+        return new SystemMessage(SystemMessageType.CONVERSATION_CONNECT_OK, parameters);
     }
 
 

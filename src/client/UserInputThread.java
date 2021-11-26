@@ -6,6 +6,7 @@ import domain.SystemMessage;
 import java.io.*;
 import java.net.Socket;
 import java.util.List;
+import java.util.Map;
 
 public class UserInputThread extends Thread{
     ObjectOutputStream socOut;
@@ -51,20 +52,21 @@ public class UserInputThread extends Thread{
                     if(cmdLine.length <=1) continue;
                     String cmd = cmdLine[0];
                     String complement = cmdLine[1];
-                    String sysMessageContent = "";
+                    Map<String, String> sysMessageContent ;
                     switch (cmd){
                         case("/new")->{
-                            sysMessageContent = senderUserName + ";" +complement;
+                            sysMessageContent = Map.of("senderUsername", senderUserName, "newConversationID", complement);
                             System.out.println("New conversation name : " + sysMessageContent);
+
                             socOut.writeObject(SystemMessage.newConversationRequest(sysMessageContent));
                         }
                         case("/private")->{
-                            sysMessageContent = senderUserName + ";" +complement;
+                            sysMessageContent = Map.of("senderUsername", senderUserName, "requestedUsername", complement);
                             System.out.println("New conversation with : " + sysMessageContent);
                             socOut.writeObject(SystemMessage.privateConversationRequest(sysMessageContent));
                         }
                         case("/open")->{
-                            sysMessageContent = senderUserName + ";" +complement;
+                            sysMessageContent = Map.of("senderUsername", senderUserName, "conversationID", complement);
                             socOut.writeObject(SystemMessage.conversationConnectRequest(sysMessageContent));
                         }
                         case("/add")->{
@@ -72,7 +74,8 @@ public class UserInputThread extends Thread{
                                 System.err.println("Cannot add a user when you are not in a conversation!");
                                 continue;
                             }
-                            sysMessageContent = senderUserName + ";"+conversationID+";" +complement;
+                            sysMessageContent = Map.of("senderUsername", senderUserName, "conversationID", conversationID, "newMemberUsername",complement);
+
                             socOut.writeObject(SystemMessage.conversationConnectRequest(sysMessageContent));
                         }
                         default -> {
