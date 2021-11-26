@@ -8,19 +8,19 @@ package client;
 
 import domain.Message;
 import domain.SystemMessage;
-import server.ClientSocketThread;
 
 import java.io.*;
 import java.net.*;
 
 import java.util.ArrayList;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 
-
+/**
+ * Client is CLI application that allows users to talk to each others
+ */
 public class Client {
 
   /**

@@ -1,5 +1,10 @@
 package domain;
 
+/**
+ * Pair is a helper class that helps us store pairs of classes
+ * @param <K> First element of the pair (key)
+ * @param <V> Second element of the pair(Value)
+ */
 public class Pair<K,V> {
     private K key;
     private V value;

@@ -36,11 +36,9 @@ public class ClientSocketThread
         this.service = service;
     }
 
-
     /**
-     * receives a request from client then sends an echo to the client
-     * @class ClientSocketThread the client socket
-     **/
+     * run launches the ClientSocketThread
+     */
     public void run() {
         try {
             ObjectInputStream socIn;

@@ -4,6 +4,9 @@ package domain;
 import java.io.Serializable;
 import java.time.LocalDate;
 
+/**
+ * Message represents a message sent by the user
+ */
 public class Message implements Serializable {
     private long senderID;
     private String usernameSender;
@@ -57,9 +60,7 @@ public class Message implements Serializable {
 
     @Override
     public String toString() {
-
         return usernameSender+ ": " + message;
-
     }
 
     public String getMessage() {

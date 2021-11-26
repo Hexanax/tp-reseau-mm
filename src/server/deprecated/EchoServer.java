@@ -31,12 +31,7 @@ public class EchoServer  {
         	System.err.println("Error in EchoServer:" + e); 
         }
        }
-  
- 	/**
-  	* main method
-	* @param EchoServer port
-  	* 
-  	**/
+
        public static void main(String args[]){ 
         ServerSocket listenSocket;
         

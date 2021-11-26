@@ -6,6 +6,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Conversation represents conversations between users, which are groups of users talking together
+ */
 public class Conversation implements Serializable {
     private Integer index = 0;
 
@@ -33,11 +36,19 @@ public class Conversation implements Serializable {
         this.members.put(creatorUsername,index);
     }
 
+    /**
+     * addMessage adds a message to the conversation
+     * @param message the message added to the conversation
+     */
     public void addMessage(Message message){
         messages.add(message);
         index++;
     }
 
+    /**
+     * getMessages gets the messages in the conversation
+     * @return the list of messages
+     */
     public List<Message> getMessages() {
         return messages;
     }
@@ -49,6 +60,9 @@ public class Conversation implements Serializable {
         }
     }
 
+    /**
+     * showHistory shows the conversation history
+     */
     public void showHistory(){
         System.out.println("======================");
         System.out.println("Conversation : " + conversationID);
@@ -72,6 +86,10 @@ public class Conversation implements Serializable {
         }
     }
 
+    /**
+     * getMembers returns the map of members in this conversation
+     * @return the map of members in this conversation
+     */
     public Map<String, Integer> getMembers() {
         return members;
     }
@@ -80,6 +98,10 @@ public class Conversation implements Serializable {
         return index;
     }
 
+    /**
+     * addMember adds a member to the conversation
+     * @param username member to be added
+     */
     public void addMember(String username){
         if (members.keySet().contains(username)) {
             return;
@@ -87,6 +109,10 @@ public class Conversation implements Serializable {
         this.members.put(username, 0);
     }
 
+    /**
+     * Removes the member from the conversation
+     * @param username username of the member that must be removed
+     */
     public void removeMember(String username){
         this.members.remove(username);
     }

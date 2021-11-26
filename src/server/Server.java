@@ -16,6 +16,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Server connects the clients together and relays messages between them
+ */
 public class Server {
 
     public static void main(String args[]){

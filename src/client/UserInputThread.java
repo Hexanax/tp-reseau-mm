@@ -4,9 +4,11 @@ import domain.Message;
 import domain.SystemMessage;
 
 import java.io.*;
-import java.net.Socket;
 import java.util.List;
 
+/**
+ * User input thread is a thread responsible for loading the inputs from the user and sending them to the server
+ */
 public class UserInputThread extends Thread{
     ObjectOutputStream socOut;
     BufferedReader stdIn = null;
@@ -28,6 +30,9 @@ public class UserInputThread extends Thread{
         this.socOut = socOut;
     }
 
+    /**
+     * Run launches the user input thread
+     */
     public void run(){
         String line;
         try {
